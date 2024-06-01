@@ -37,7 +37,8 @@ const context = await esbuild.context({
 	logLevel: "info",
 	sourcemap: prod ? false : "inline",
 	treeShaking: true,
-	outfile: "main.js",
+	outfile: "D:\\Document_J\\iCloudDrive\\iCloud~md~obsidian\\jx\\.obsidian\\plugins\\obsidian-share-by-hackmd\\main.js",
+	// outfile: "main.js",
 });
 
 if (prod) {
