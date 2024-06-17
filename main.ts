@@ -1,4 +1,4 @@
-import { App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting, requestUrl, RequestUrlParam, RequestUrlResponse } from 'obsidian';
+import {  parseYaml, stringifyYaml ,App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting, requestUrl, RequestUrlParam, RequestUrlResponse } from 'obsidian';
 import { share } from 'sharer';
 // 記得重命名這些類和接口！
 
@@ -34,6 +34,8 @@ export default class hackmdPlugin extends Plugin {
 						window.open(link, '_blank');
 					})
 					navigator.clipboard.writeText(link)
+					// editor.setValue(`HackMD Link: [${link}](${link})\n\n` + editor.getValue());
+					this.addLinkToYaml(editor,"shared link",link)
 
 				}).catch((error) => {
 					console.log(error);
@@ -56,6 +58,7 @@ export default class hackmdPlugin extends Plugin {
 						window.open(link, '_blank');
 					})
 					navigator.clipboard.writeText(link)
+					this.addLinkToYaml(editor,"editable shared link",link)
 					
 				}).catch((error) => {
 					console.log(error);
@@ -83,6 +86,29 @@ export default class hackmdPlugin extends Plugin {
 
 	async saveSettings() {
 		await this.saveData(this.settings);
+	}
+
+	addLinkToYaml(editor: Editor, key : string,link: string) {
+		const content = editor.getValue();
+		const yamlRegex = /^---\n([\s\S]*?)\n---/;
+		let newContent;
+
+		if (yamlRegex.test(content)) {
+			newContent = content.replace(yamlRegex, (match, p1) => {
+				const yamlData = parseYaml(p1) || {};
+				yamlData[key] = link;
+				const newYaml = stringifyYaml(yamlData).trim();
+				return `---\n${newYaml}\n---`;
+			});
+		} else {
+			const yamlData = {
+				key: link
+			};
+			const newYaml = stringifyYaml(yamlData).trim();
+			newContent = `---\n${newYaml}\n---\n\n` + content;
+		}
+
+		editor.setValue(newContent);
 	}
 }
 
