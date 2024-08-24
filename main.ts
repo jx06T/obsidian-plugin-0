@@ -102,7 +102,7 @@ export default class hackmdPlugin extends Plugin {
 			});
 		} else {
 			const yamlData = {
-				key: link
+				[key]: link
 			};
 			const newYaml = stringifyYaml(yamlData).trim();
 			newContent = `---\n${newYaml}\n---\n\n` + content;
